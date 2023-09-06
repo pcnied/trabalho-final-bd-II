@@ -1,4 +1,4 @@
-import { usersRepository } from "../../server";
+import { UsersRepository } from "../../repositories";
 
 export type UserDTO = {
   name: string;
@@ -13,19 +13,20 @@ type ResponseCreate = {
 };
 
 export class CreateUser {
-  execute(data: UserDTO): ResponseCreate {
-    const usersExists = usersRepository
-      .listUsers()
-      .some((user) => user.email === data.email);
+  public async execute(data: UserDTO): Promise<ResponseCreate> {
+    const repository = new UsersRepository();
 
-    if (usersExists) {
+    const userExists = await repository.getByEmail(data.email);
+
+    if (userExists) {
       return {
-        message: "Não foi possível criar uma conta. Tente novamente!",
+        message:
+          "Não foi possível criar uma conta com o e-mail inserido. Tente novamente!",
         success: false,
       };
     }
 
-    const userCreated = usersRepository.createUser(data);
+    const userCreated = await repository.createUser(data);
 
     return {
       message: "Conta criada com sucesso!",

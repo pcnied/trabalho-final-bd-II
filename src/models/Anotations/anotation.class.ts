@@ -1,5 +1,12 @@
 import { v4 as uuid } from "uuid";
 
+export type AnotationJSON = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+};
+
 export class Anotation {
   private _userId: string;
   private _id: string;

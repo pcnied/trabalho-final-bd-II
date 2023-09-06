@@ -1,10 +1,32 @@
-import { databaseAnotations } from "../../database";
+import { Database } from "../../database";
 import { Anotation } from "../../models";
 
 export class AnotationRepository {
-  createAnotation(anotation: Anotation): Anotation {
-    databaseAnotations.push(anotation);
-    return anotation;
+  public async createAnotation(
+    anotation: Anotation
+  ): Promise<Anotation | undefined> {
+    const { userId, title, description, date } = anotation;
+
+    await Database.query(
+      "INSERT INTO anotations (user_id, title, description, date) VALUES ($1, $2, $3, $4)",
+      [userId, title, description, date]
+    );
+
+    const anotationSelected = await Database.query(
+      "SELECT a.user_id, a.id, a.title, a.description, a.date, a.archived, a.created_at, u.email FROM anotations a INNER JOIN users u ON u.id = a.user_id ORDER BY a.created_at DESC LIMIT 1",
+      [userId, title, description, date]
+    );
+
+    const [lastAnotation] = anotationSelected.rows;
+
+    return {
+      userId: lastAnotation.user_id,
+      id: lastAnotation.id,
+      title: lastAnotation.title,
+      description: lastAnotation._description,
+      date: lastAnotation._date,
+      archived: lastAnotation._archived,
+    };
   }
 
   deleteAnotation(id: string): Anotation | undefined {

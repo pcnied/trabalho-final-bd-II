@@ -1,4 +1,5 @@
-import { usersRepository } from "../../server";
+import { UserJSON } from "../../models";
+import { UsersRepository } from "../../repositories";
 
 export type LoginUserDTO = {
   email: string;
@@ -8,17 +9,19 @@ export type LoginUserDTO = {
 type ResponseLoginUser = {
   success: boolean;
   message: string;
-  id?: string;
+  id?: UserJSON;
 };
 
 export class LoginUser {
-  execute(data: LoginUserDTO): ResponseLoginUser {
-    const searchUser = usersRepository.findUserByCredencials(data);
+  public async execute(data: LoginUserDTO): Promise<ResponseLoginUser> {
+    const repository = new UsersRepository();
+
+    const searchUser = await repository.findUserByCredencials(data);
 
     if (!searchUser) {
       return {
         success: false,
-        message: "O usuário não foi encontrado pelo ID.",
+        message: "Não foi possível realizar o Login com os dados informados.",
         id: searchUser,
       };
     }

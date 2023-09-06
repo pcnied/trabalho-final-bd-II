@@ -1,20 +1,27 @@
 import { BaseClass } from "../BaseClass/baseClass.class";
 
+export type UserJSON = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+};
+
 export class User extends BaseClass {
   constructor(
-    private name: string,
-    private email: string,
-    private password: string
+    private _name: string,
+    private _email: string,
+    private _password: string
   ) {
     super();
   }
 
-  toJSON() {
+  public toJSON(): UserJSON {
     return {
       id: this.id,
-      name: this.name,
-      email: this.email,
-      password: this.password,
+      name: this._name,
+      email: this._email,
+      password: this._password,
     };
   }
 }

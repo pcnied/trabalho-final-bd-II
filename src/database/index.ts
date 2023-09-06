@@ -13,7 +13,7 @@ const connectionPool = new Pool({
 export class Database {
   public static async query(sql: string, params?: any[]) {
     const client = await connectionPool.connect();
-    const response = await client.query("sql, params");
+    const response = await client.query(sql, params);
 
     client.release();
 
