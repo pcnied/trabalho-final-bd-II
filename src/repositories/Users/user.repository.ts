@@ -1,4 +1,4 @@
-import { Database } from "../../database";
+import { pgHelper } from "../../database";
 import { UserJSON } from "../../models";
 import { UserDTO } from "../../usecase";
 import { LoginUserDTO } from "../../usecase/Users/loginUser.usecase";
@@ -6,21 +6,21 @@ import { LoginUserDTO } from "../../usecase/Users/loginUser.usecase";
 export class UsersRepository {
   public async createUser(data: UserDTO): Promise<UserJSON> {
     const { name, email, password } = data;
-    await Database.query(
+    await pgHelper.client.query(
       "INSERT INTO users (name, email, password) VALUES ($1, $2, $3)",
       [name, email, password]
     );
-    const userSelect = await Database.query(
+    const userSelect = await pgHelper.client.query(
       "SELECT * FROM users ORDER BY created_at DESC LIMIT 1"
     );
 
-    const [lastInserted] = userSelect.rows;
+    const [lastUser] = userSelect.rows;
 
     return {
-      id: lastInserted.id,
-      name: lastInserted.name,
-      email: lastInserted.email,
-      password: lastInserted.password,
+      id: lastUser.id,
+      name: lastUser.name,
+      email: lastUser.email,
+      password: lastUser.password,
     };
   }
 
@@ -34,7 +34,7 @@ export class UsersRepository {
     data: LoginUserDTO
   ): Promise<UserJSON | undefined> {
     const { email, password } = data;
-    const user = await Database.query(
+    const user = await pgHelper.client.query(
       "SELECT * FROM users where (email, password) = ($1, $2)",
       [email, password]
     );
@@ -50,7 +50,7 @@ export class UsersRepository {
   }
 
   public async getById(id: string): Promise<UserJSON | undefined> {
-    const user = await Database.query("SELECT * FROM users where id = $1", [
+    const user = await pgHelper.client.query("SELECT * FROM users WHERE id = $1", [
       id,
     ]);
 
@@ -65,10 +65,10 @@ export class UsersRepository {
   }
 
   public async getByEmail(email: string): Promise<boolean> {
-    const user = await Database.query("SELECT * FROM users where email = $1", [
+    const user = await pgHelper.client.query("SELECT * FROM users where email = $1", [
       email,
     ]);
 
-    return !!user.rowCount;
+    return user.length !== 0;
   }
 }

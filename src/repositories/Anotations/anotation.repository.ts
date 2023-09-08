@@ -19,13 +19,11 @@ export class AnotationRepository {
 
     const [lastAnotation] = anotationSelected.rows;
 
-    return {
+    return new Anotation {
       userId: lastAnotation.user_id,
-      id: lastAnotation.id,
       title: lastAnotation.title,
-      description: lastAnotation._description,
-      date: lastAnotation._date,
-      archived: lastAnotation._archived,
+      description: lastAnotation.description,
+      date: lastAnotation.date
     };
   }
 

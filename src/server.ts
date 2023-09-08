@@ -2,6 +2,7 @@ import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import routesApp from "./routes/index";
+import { pgHelper } from "./database";
 
 const app = express();
 
@@ -14,6 +15,13 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(routesApp);
 
-app.listen(process.env.PORT, () =>
-  console.log("Servidor iniciado", process.env.PORT)
-);
+pgHelper
+  .connect()
+  .then(() => {
+    app.listen(process.env.PORT, () =>
+      console.log("Servidor iniciado", process.env.PORT)
+    );
+  })
+  .catch((err) => {
+    console.log(err);
+  });
