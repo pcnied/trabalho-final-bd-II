@@ -14,7 +14,7 @@ export class UsersRepository {
       "SELECT * FROM users ORDER BY created_at DESC LIMIT 1"
     );
 
-    const [lastUser] = userSelect.rows;
+    const [lastUser] = userSelect;
 
     return {
       id: lastUser.id,
@@ -34,33 +34,35 @@ export class UsersRepository {
     data: LoginUserDTO
   ): Promise<UserJSON | undefined> {
     const { email, password } = data;
-    const user = await pgHelper.client.query(
+    const response = await pgHelper.client.query(
       "SELECT * FROM users where (email, password) = ($1, $2)",
       [email, password]
     );
 
-    if (!user.rowCount) return undefined;
+    if (!response.length) return undefined;
+
+    const [userLogin] = response;
 
     return {
-      id: user.rows[0].id,
-      name: user.rows[0].name,
-      email: user.rows[0].email,
-      password: user.rows[0].password,
+      id: userLogin.id,
+      name: userLogin.name,
+      email: userLogin.email,
+      password: userLogin.password,
     };
   }
 
-  public async getById(id: string): Promise<UserJSON | undefined> {
-    const user = await pgHelper.client.query("SELECT * FROM users WHERE id = $1", [
-      id,
+  public async getById(userId: string): Promise<UserJSON | undefined> {
+    const response = await pgHelper.client.query("SELECT * FROM users WHERE id = $1", [
+      userId,
     ]);
 
-    if (!user.rowCount) return undefined;
+    if (!response.length) return undefined;
 
     return {
-      id: user.rows[0].id,
-      name: user.rows[0].name,
-      email: user.rows[0].email,
-      password: user.rows[0].password,
+      id: response[0].id,
+      name: response[0].name,
+      email: response[0].email,
+      password: response[0].password,
     };
   }
 

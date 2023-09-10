@@ -1,5 +1,5 @@
-import { Anotation } from "../../models";
-import { AnotationRepository } from "../../repositories";
+import { Anotation, UserJSON } from "../../models";
+import { AnotationRepository, UsersRepository } from "../../repositories";
 
 export type CreateAnotationRequestDTO = {
   userId: string;
@@ -11,17 +11,32 @@ export type CreateAnotationRequestDTO = {
 export type CreateAnotationResponseDTO = {
   message: string;
   success: boolean;
-  anotation: Anotation;
+  anotation?: Anotation;
 };
 
 export class CreateAnotationUseCase {
-  constructor(private anotationRepository: AnotationRepository) {}
-
-  execute(data: CreateAnotationRequestDTO): CreateAnotationResponseDTO {
+  public async execute(
+    data: CreateAnotationRequestDTO
+  ): Promise<CreateAnotationResponseDTO> {
     const { userId, title, description, date } = data;
 
-    const anotation = new Anotation(userId, title, description, date);
-    this.anotationRepository.createAnotation(anotation);
+    const userRepository = new UsersRepository();
+    const userExists = await userRepository.getById(data.userId);
+
+    if (!userExists) {
+      return {
+        success: false,
+        message: "Usuário não encontrado. A anotação não pode ser criada.",
+      };
+    }
+
+    const anotationRepository = new AnotationRepository();
+    const newAnotation = await anotationRepository.createAnotation({
+      userId,
+      title,
+      description,
+      date,
+    })
 
     return {
       message: "Anotação criada com sucesso!",
