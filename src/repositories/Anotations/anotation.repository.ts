@@ -2,24 +2,27 @@ import { pgHelper } from "../../database";
 import { Anotation } from "../../models";
 
 export class AnotationRepository {
-  public async createAnotation(
-    anotation: Anotation
-  ): Promise<Anotation> {
-    const { userId, title, description, date } = anotation;
+  public async createAnotation(anotation: Anotation): Promise<Anotation> {
+    const { userId, title, description, createdAt } = anotation;
 
     await pgHelper.client.query(
-      "INSERT INTO anotations (user_id, title, description, date) VALUES ($1, $2, $3, $4)",
-      [userId, title, description, date]
+      "INSERT INTO anotations (user_id, title, description, created_at) VALUES ($1, $2, $3, $4)",
+      [userId, title, description, createdAt]
     );
 
     const anotationSelected = await pgHelper.client.query(
-      "SELECT a.user_id, a.id, a.title, a.description, a.date, a.archived, a.created_at, u.email FROM anotations a INNER JOIN users u ON u.id = a.user_id ORDER BY a.created_at DESC LIMIT 1",
-      [userId, title, description, date]
+      "SELECT a.user_id, a.id, a.title, a.description, a.archived, a.created_at, u.email FROM anotations a INNER JOIN users u ON u.id = a.user_id ORDER BY a.created_at DESC LIMIT 1",
+      [userId, title, description, createdAt]
     );
 
     const [lastAnotation] = anotationSelected;
 
-    return new Anotation(userId, title, description, date);
+    return new Anotation(
+      lastAnotation.userId,
+      lastAnotation.title,
+      lastAnotation.description,
+      lastAnotation.createdAt
+    );
   }
 
   deleteAnotation(id: string): Anotation | undefined {
@@ -34,16 +37,24 @@ export class AnotationRepository {
     return anotationDeleted;
   }
 
-  public async getAllAnotations(
-    userId: string,
-    archived: boolean,
-    title?: string
-  ): Anotation[] {
-    const response = await pgHelper.client.query('SELECT * FROM anotations WHERE user_id = $1', [userId])
+  public async getAllAnotations(userId: string): Promise<Anotation[]> {
+    const anotations = await pgHelper.client.query(
+      "SELECT a.id as anotation_id, a.title, a.description, a.created_at, u.id as user_id, u.email FROM anotations a INNER JOIN users u ON a.user_id = u.id WHERE user_id = $1",
+      [userId]
+    );
 
-    if (!response.length) return undefined;
+    const listAnotations: Anotation[] = anotations.map((v: any) => {
+      return {
+        userId: v.user_id,
+        id: v.anotation_id,
+        title: v.title,
+        description: v.description,
+        created_at: v.createdAt,
+        archived: v.archived,
+      };
+    });
 
-    const listAnotations = response.find((a) => a.)
+    return listAnotations;
   }
 
   getAnotation(id: string): Anotation | undefined {

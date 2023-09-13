@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
-import configs from './ormconfig';
+import { DataSource } from "typeorm";
+import configs from "./ormconfig";
 
 export const dataSource = new DataSource(configs);

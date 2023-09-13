@@ -5,9 +5,9 @@ export function verifyCreateAnotation(
   res: Response,
   next: NextFunction
 ) {
-  const { title, description, date } = req.body;
+  const { title, description } = req.body;
 
-  if (!title || !description || !date) {
+  if (!title || !description) {
     return res.status(400).json({
       message:
         "Todos os campos precisam estar preenchidos para a criação de uma anotação.",
@@ -29,11 +29,5 @@ export function verifyCreateAnotation(
     });
   }
 
-  if (!date) {
-    return res.status(400).json({
-      message: "A propriedade data não foi preenchida. Tente novamente.",
-      success: false,
-    });
-  }
   next();
 }

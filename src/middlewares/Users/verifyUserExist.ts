@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from "express";
-import { usersRepository } from "../../server";
+import { usersRepository } from "../../routes";
 
-export function verifyUserExist(
+export async function verifyUserExist(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   const { userId } = req.params;
 
-  const user = usersRepository.getById(userId);
+  const user = await usersRepository.getById(userId);
 
   if (!user) {
     return res.status(404).json({

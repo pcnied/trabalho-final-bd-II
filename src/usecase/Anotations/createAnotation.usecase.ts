@@ -1,11 +1,10 @@
-import { Anotation, UserJSON } from "../../models";
+import { Anotation } from "../../models";
 import { AnotationRepository, UsersRepository } from "../../repositories";
 
 export type CreateAnotationRequestDTO = {
   userId: string;
   title: string;
   description: string;
-  date: string;
 };
 
 export type CreateAnotationResponseDTO = {
@@ -18,7 +17,7 @@ export class CreateAnotationUseCase {
   public async execute(
     data: CreateAnotationRequestDTO
   ): Promise<CreateAnotationResponseDTO> {
-    const { userId, title, description, date } = data;
+    const { userId, title, description } = data;
 
     const userRepository = new UsersRepository();
     const userExists = await userRepository.getById(data.userId);
@@ -31,17 +30,15 @@ export class CreateAnotationUseCase {
     }
 
     const anotationRepository = new AnotationRepository();
-    const newAnotation = await anotationRepository.createAnotation({
-      userId,
-      title,
-      description,
-      date,
-    })
+    const newAnotation = new Anotation(userId, title, description, new Date());
+    const responseNewAnotation = await anotationRepository.createAnotation(
+      newAnotation
+    );
 
     return {
       message: "Anotação criada com sucesso!",
       success: true,
-      anotation,
+      anotation: responseNewAnotation,
     };
   }
 }

@@ -1,31 +1,24 @@
 import { v4 as uuid } from "uuid";
 
-export type AnotationJSON = {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-};
-
 export class Anotation {
   private _userId: string;
   private _id: string;
   private _title: string;
   private _description: string;
-  private _date: string;
+  private _createdAt: Date;
   private _archived: boolean;
 
   constructor(
     userId: string,
     title: string,
     description: string,
-    date: string
+    _createdAt: Date
   ) {
     this._userId = userId;
     this._id = uuid();
     this._title = title;
     this._description = description;
-    this._date = date;
+    this._createdAt = _createdAt;
     this._archived = false;
   }
 
@@ -45,8 +38,8 @@ export class Anotation {
     return this._description;
   }
 
-  get date(): string {
-    return this._date;
+  get createdAt(): Date {
+    return this._createdAt;
   }
 
   get archived(): boolean {
@@ -69,8 +62,8 @@ export class Anotation {
     this._description = description;
   }
 
-  set date(date: string) {
-    this._date = date;
+  set createdAt(createdAt: Date) {
+    this._createdAt = createdAt;
   }
 
   set archived(archived: boolean) {
