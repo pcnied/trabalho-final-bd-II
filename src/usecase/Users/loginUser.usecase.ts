@@ -22,7 +22,6 @@ export class LoginUser {
       return {
         success: false,
         message: "Não foi possível realizar o Login com os dados informados.",
-        id: searchUser,
       };
     }
 

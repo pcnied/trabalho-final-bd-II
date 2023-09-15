@@ -1,76 +1,61 @@
 import { pgHelper } from "../../database";
-import { UserJSON } from "../../models";
-import { UserDTO } from "../../usecase";
+import { UserEntity } from "../../database/entities/user.entity";
+import { User, UserJSON } from "../../models";
+import { RequestCreateDTO } from "../../usecase";
 import { LoginUserDTO } from "../../usecase/Users/loginUser.usecase";
 
 export class UsersRepository {
-  public async createUser(data: UserDTO): Promise<UserJSON> {
+  public async createUser(data: RequestCreateDTO): Promise<UserJSON> {
     const { name, email, password } = data;
-    await pgHelper.client.query(
-      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3)",
-      [name, email, password]
-    );
-    const userSelect = await pgHelper.client.query(
-      "SELECT * FROM users ORDER BY created_at DESC LIMIT 1"
-    );
 
-    const [lastUser] = userSelect;
+    const manager = pgHelper.client.manager;
+    const newUser = manager.create(UserEntity, { name, email, password });
+    const userCreated = await manager.save(newUser);
 
-    return {
-      id: lastUser.id,
-      name: lastUser.name,
-      email: lastUser.email,
-      password: lastUser.password,
-    };
+    return userCreated;
   }
 
-  // listUsers() {
-  //   const users: User[] = databaseUsers;
-
-  //   return users.map((user) => user.toJSON());
-  // }
+  public async listUsers(email: string) {
+    const manager = pgHelper.client.manager;
+    const userFound = await manager.find(UserEntity, {
+      where: {
+        email,
+      },
+    });
+  }
 
   public async findUserByCredencials(
     data: LoginUserDTO
   ): Promise<UserJSON | undefined> {
     const { email, password } = data;
-    const response = await pgHelper.client.query(
-      "SELECT * FROM users where (email, password) = ($1, $2)",
-      [email, password]
-    );
+    const manager = pgHelper.client.manager;
+    const userFound = await manager.findOneBy(UserEntity, {
+      email,
+      password,
+    });
 
-    if (!response.length) return undefined;
+    if (!userFound) return undefined;
 
-    const [userLogin] = response;
-
-    return {
-      id: userLogin.id,
-      name: userLogin.name,
-      email: userLogin.email,
-      password: userLogin.password,
-    };
+    return userFound;
   }
 
-  public async getById(userId: string): Promise<UserJSON | undefined> {
-    const response = await pgHelper.client.query("SELECT * FROM users WHERE id = $1", [
-      userId,
-    ]);
+  public async getById(userId: string): Promise<User | undefined> {
+    const manager = pgHelper.client.manager;
+    const userFound = await manager.findOneBy(UserEntity, { id: userId });
 
-    if (!response.length) return undefined;
+    if (!userFound) return undefined;
 
-    return {
-      id: response[0].id,
-      name: response[0].name,
-      email: response[0].email,
-      password: response[0].password,
-    };
+    return this.entityToModel(userFound);
   }
 
   public async getByEmail(email: string): Promise<boolean> {
-    const user = await pgHelper.client.query("SELECT * FROM users where email = $1", [
-      email,
-    ]);
+    const manager = pgHelper.client.manager;
+    const userFound = await manager.findOneBy(UserEntity, { email });
 
-    return user.length !== 0;
+    return !!userFound;
+  }
+
+  private entityToModel(dataDB: UserEntity): User {
+    return new User(dataDB.id, dataDB.name, dataDB.email, dataDB.password);
   }
 }

@@ -1,19 +1,19 @@
 import { UsersRepository } from "../../repositories";
 
-export type UserDTO = {
+export type RequestCreateDTO = {
   name: string;
   email: string;
   password: string;
 };
 
-type ResponseCreate = {
+type ResponseCreateDTO = {
   success: boolean;
   message: string;
-  data?: UserDTO & { id: string };
+  data?: RequestCreateDTO & { id: string };
 };
 
 export class CreateUser {
-  public async execute(data: UserDTO): Promise<ResponseCreate> {
+  public async execute(data: RequestCreateDTO): Promise<ResponseCreateDTO> {
     const repository = new UsersRepository();
 
     const userExists = await repository.getByEmail(data.email);
