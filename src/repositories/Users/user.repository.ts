@@ -15,14 +15,14 @@ export class UsersRepository {
     return userCreated;
   }
 
-  public async listUsers(email: string) {
-    const manager = pgHelper.client.manager;
-    const userFound = await manager.find(UserEntity, {
-      where: {
-        email,
-      },
-    });
-  }
+  // public async listUsers(email: string) {
+  //   const manager = pgHelper.client.manager;
+  //   const userFound = await manager.find(UserEntity, {
+  //     where: {
+  //       email,
+  //     },
+  //   });
+  // }
 
   public async findUserByCredencials(
     data: LoginUserDTO

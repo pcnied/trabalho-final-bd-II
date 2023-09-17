@@ -1,28 +1,22 @@
 import { pgHelper } from "../../database";
+import { AnotationEntity } from "../../database/entities/anotation.entity";
 import { Anotation } from "../../models";
 
 export class AnotationRepository {
   public async createAnotation(anotation: Anotation): Promise<Anotation> {
     const { userId, title, description, createdAt } = anotation;
+    const manager = pgHelper.client.manager;
 
-    await pgHelper.client.query(
-      "INSERT INTO anotations (user_id, title, description, created_at) VALUES ($1, $2, $3, $4)",
-      [userId, title, description, createdAt]
-    );
+    const newAnotation = manager.create(AnotationEntity, {
+      userId,
+      title,
+      description,
+      createdAt
+    })
 
-    const anotationSelected = await pgHelper.client.query(
-      "SELECT a.user_id, a.id, a.title, a.description, a.archived, a.created_at, u.email FROM anotations a INNER JOIN users u ON u.id = a.user_id ORDER BY a.created_at DESC LIMIT 1",
-      [userId, title, description, createdAt]
-    );
+    const anotationCreated = await manager.save(newAnotation)
 
-    const [lastAnotation] = anotationSelected;
-
-    return new Anotation(
-      lastAnotation.userId,
-      lastAnotation.title,
-      lastAnotation.description,
-      lastAnotation.createdAt
-    );
+    return 
   }
 
   deleteAnotation(id: string): Anotation | undefined {
@@ -88,5 +82,9 @@ export class AnotationRepository {
     databaseAnotations[index].archived = item.archived;
 
     return databaseAnotations[index];
+  }
+
+  private entityToModel(dataDB: AnotationEntity): Anotation {
+    return new User(dataDB.id, dataDB.name, dataDB.email, dataDB.password);
   }
 }
