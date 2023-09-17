@@ -1,6 +1,6 @@
 import { pgHelper } from "../../database";
 import { AnotationEntity } from "../../database/entities/anotation.entity";
-import { Anotation } from "../../models";
+import { Anotation, User } from "../../models";
 
 export class AnotationRepository {
   public async createAnotation(anotation: Anotation): Promise<Anotation> {
@@ -16,7 +16,7 @@ export class AnotationRepository {
 
     const anotationCreated = await manager.save(newAnotation)
 
-    return 
+    return anotationCreated;
   }
 
   deleteAnotation(id: string): Anotation | undefined {
@@ -29,36 +29,6 @@ export class AnotationRepository {
     const anotationDeleted = databaseAnotations[index];
     databaseAnotations.splice(index, 1);
     return anotationDeleted;
-  }
-
-  public async getAllAnotations(userId: string): Promise<Anotation[]> {
-    const anotations = await pgHelper.client.query(
-      "SELECT a.id as anotation_id, a.title, a.description, a.created_at, u.id as user_id, u.email FROM anotations a INNER JOIN users u ON a.user_id = u.id WHERE user_id = $1",
-      [userId]
-    );
-
-    const listAnotations: Anotation[] = anotations.map((v: any) => {
-      return {
-        userId: v.user_id,
-        id: v.anotation_id,
-        title: v.title,
-        description: v.description,
-        created_at: v.createdAt,
-        archived: v.archived,
-      };
-    });
-
-    return listAnotations;
-  }
-
-  getAnotation(id: string): Anotation | undefined {
-    const anotation = databaseAnotations.find((a) => a.id === id);
-
-    if (!anotation) {
-      return undefined;
-    }
-
-    return anotation;
   }
 
   updateAnotation(
@@ -84,7 +54,32 @@ export class AnotationRepository {
     return databaseAnotations[index];
   }
 
+  public async getAllAnotations(userId: string): Promise<Anotation[]> {
+    const manager = pgHelper.client.manager;
+    const listAnotations = await manager.find(AnotationEntity, {
+      where: {
+        userId
+      }
+    })
+
+    return listAnotations.map((row) => );
+  }
+
+  getAnotation(id: string): Anotation | undefined {
+    const anotation = databaseAnotations.find((a) => a.id === id);
+
+    if (!anotation) {
+      return undefined;
+    }
+
+    return anotation;
+  }
+
   private entityToModel(dataDB: AnotationEntity): Anotation {
-    return new User(dataDB.id, dataDB.name, dataDB.email, dataDB.password);
+    const user = new User(dataDB.user.id, dataDB.user.name, dataDB.user.email, dataDB.user.password)
+
+    const anotation = new Anotation(dataDB.id, dataDB.title, dataDB.description, dataDB.createdAt)
+
+    return anotation;
   }
 }

@@ -12,13 +12,13 @@ export class Anotation {
     userId: string,
     title: string,
     description: string,
-    _createdAt: Date
+    createdAt: Date
   ) {
     this._userId = userId;
     this._id = uuid();
     this._title = title;
     this._description = description;
-    this._createdAt = _createdAt;
+    this._createdAt = createdAt;
     this._archived = false;
   }
 
