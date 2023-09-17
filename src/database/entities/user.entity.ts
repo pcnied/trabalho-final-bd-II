@@ -1,4 +1,5 @@
-import { BeforeInsert, Column, Entity, PrimaryColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { AnotationEntity } from "./anotation.entity";
 
 @Entity({ name: "users" })
 export class UserEntity {
@@ -16,6 +17,9 @@ export class UserEntity {
 
   @Column({ name: "created_at" })
   createdAt!: Date;
+
+  @OneToMany(() => AnotationEntity, (a) => a.user)
+  anotations!: AnotationEntity[];
 
   @BeforeInsert()
   beforeInsert() {
