@@ -1,5 +1,7 @@
+import { pgHelper } from "../../database";
+import { AnotationEntity } from "../../database/entities/anotation.entity";
 import { Anotation } from "../../models";
-import { AnotationRepository, UsersRepository } from "../../repositories";
+import { AnotationRepository } from "../../repositories";
 
 export type CreateAnotationRequestDTO = {
   userId: string;
@@ -19,18 +21,13 @@ export class CreateAnotationUseCase {
   ): Promise<CreateAnotationResponseDTO> {
     const { userId, title, description } = data;
 
-    const userRepository = new UsersRepository();
-    const userExists = await userRepository.getById(data.userId);
-
-    if (!userExists) {
-      return {
-        success: false,
-        message: "Usuário não encontrado. A anotação não pode ser criada.",
-      };
-    }
-
     const anotationRepository = new AnotationRepository();
-    const newAnotation = new Anotation(userId, title, description, new Date());
+
+    const newAnotation = pgHelper.client.manager.create(AnotationEntity, {
+      userId,
+      title,
+      description,
+    });
     const responseNewAnotation = await anotationRepository.createAnotation(
       newAnotation
     );

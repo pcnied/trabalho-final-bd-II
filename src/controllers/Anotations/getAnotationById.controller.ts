@@ -1,19 +1,15 @@
 import { Request, Response } from "express";
-import { UpdateAnotationUseCase } from "../../usecase";
+import { GetAnotationByIdUseCase } from "../../usecase";
 
-export class UpdateAnotationController {
+export class GetAnotationController {
   public static async execute(req: Request, res: Response) {
     const { userId, anotationId } = req.params;
-    const { title, description, archived } = req.body;
 
-    const updateAnotationUseCase = new UpdateAnotationUseCase();
+    const getAnotationByIdUseCase = new GetAnotationByIdUseCase();
 
-    const response = await updateAnotationUseCase.execute({
+    const response = await getAnotationByIdUseCase.execute({
       userId,
       anotationId,
-      title,
-      description,
-      archived,
     });
 
     if (!response.success) {

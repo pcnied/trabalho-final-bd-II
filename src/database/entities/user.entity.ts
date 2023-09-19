@@ -1,4 +1,11 @@
-import { BeforeInsert, Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { randomUUID } from "crypto";
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryColumn,
+} from "typeorm";
 import { AnotationEntity } from "./anotation.entity";
 
 @Entity({ name: "users" })
@@ -23,6 +30,7 @@ export class UserEntity {
 
   @BeforeInsert()
   beforeInsert() {
+    this.id = randomUUID();
     this.createdAt = new Date();
   }
 }

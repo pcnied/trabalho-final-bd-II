@@ -4,7 +4,7 @@ import { User, UserJSON } from "../../models";
 import { RequestCreateDTO } from "../../usecase";
 import { LoginUserDTO } from "../../usecase/Users/loginUser.usecase";
 
-export class UsersRepository {
+export class UserRepository {
   public async createUser(data: RequestCreateDTO): Promise<UserJSON> {
     const { name, email, password } = data;
 

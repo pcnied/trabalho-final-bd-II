@@ -1,24 +1,21 @@
 import { Request, Response } from "express";
-import { anotationRepository } from "../../routes/index";
 import { DeleteAnotationUseCase } from "../../usecase";
 
 export class DeleteAnotationController {
-  public static execute(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
+  public static async execute(req: Request, res: Response) {
+    const { userId, anotationId } = req.params;
 
-      const deleteAnotationUseCase = new DeleteAnotationUseCase(
-        anotationRepository
-      );
+    const deleteAnotationUseCase = new DeleteAnotationUseCase();
 
-      const response = deleteAnotationUseCase.execute({
-        id,
-      });
-      return res.status(200).json(response);
-    } catch (error: any) {
-      return res.status(400).json({
-        error: error.message,
-      });
+    const response = await deleteAnotationUseCase.execute({
+      userId,
+      anotationId,
+    });
+
+    if (!response.success) {
+      return res.status(404).json(response);
     }
+
+    return res.status(200).json(response);
   }
 }

@@ -14,10 +14,10 @@ import {
   verifyUpdateAnotation,
   verifyUserExist,
 } from "../middlewares";
-import { AnotationRepository, UsersRepository } from "../repositories";
+import { AnotationRepository, UserRepository } from "../repositories";
 
 export const anotationRepository = new AnotationRepository();
-export const usersRepository = new UsersRepository();
+export const usersRepository = new UserRepository();
 
 const app = express.Router();
 app.get("/", (request: Request, response: Response) =>

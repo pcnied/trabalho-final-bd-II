@@ -1,22 +1,23 @@
 import { Anotation } from "../../models";
 import { AnotationRepository } from "../../repositories";
 
-type DeleteAnotationRequestDTO = {
+type GetAnotationRequestDTO = {
   userId: string;
   anotationId: string;
 };
 
-type DeleteAnotationResponseDTO = {
+type GetAnotationResponseDTO = {
   message: string;
   success: boolean;
   anotation?: Anotation;
 };
 
-export class DeleteAnotationUseCase {
+export class GetAnotationByIdUseCase {
   public async execute(
-    data: DeleteAnotationRequestDTO
-  ): Promise<DeleteAnotationResponseDTO> {
+    data: GetAnotationRequestDTO
+  ): Promise<GetAnotationResponseDTO> {
     const { userId, anotationId } = data;
+
     const anotationRepository = new AnotationRepository();
 
     const anotationFound = await anotationRepository.getAnotationById(
@@ -30,10 +31,8 @@ export class DeleteAnotationUseCase {
       };
     }
 
-    await anotationRepository.deleteAnotation(anotationId);
-
     return {
-      message: "Anotação deletada com sucesso!",
+      message: "Anotação encontrada com sucesso!",
       success: true,
       anotation: anotationFound,
     };

@@ -2,41 +2,43 @@ import { Anotation } from "../../models";
 import { AnotationRepository } from "../../repositories";
 
 export type UpdateAnotationRequestDTO = {
+  userId: string;
+  anotationId: string;
   title: string;
   description: string;
-  date: string;
   archived?: boolean;
 };
 
 export type UpdateAnotationResponseDTO = {
   message: string;
   success: boolean;
-  anotation?: Anotation | undefined;
+  anotation?: Anotation | null;
 };
 
 export class UpdateAnotationUseCase {
-  constructor(private anotationRepository: AnotationRepository) {}
-
-  execute(
-    id: string,
+  public async execute(
     data: UpdateAnotationRequestDTO
-  ): UpdateAnotationResponseDTO {
-    const { title, description, date, archived } = data;
+  ): Promise<UpdateAnotationResponseDTO> {
+    const { userId, anotationId, title, description, archived } = data;
 
-    const anotation = this.anotationRepository.getAnotation(id);
+    const anotationRepository = new AnotationRepository();
 
-    if (!anotation) {
+    const anotationFound = await anotationRepository.getAnotationById(
+      anotationId
+    );
+
+    if (!anotationFound || anotationFound.userId != userId) {
       return {
-        message: "Não foi possível atualizar a anotação. Tente novamente!",
+        message: "Anotação não encontrada. Tente novamente!",
         success: false,
       };
     }
 
-    const anotationUpdated = this.anotationRepository.updateAnotation(id, {
-      title: title || anotation.title,
-      description: description || anotation.description,
-      date: date || anotation.date,
-      archived: archived !== undefined ? archived : anotation.archived,
+    const anotationUpdated = await anotationRepository.updateAnotation({
+      anotationId,
+      title: title ? title : anotationFound.title,
+      description: description ? description : anotationFound.description,
+      archived: archived != undefined ? archived : anotationFound.archived,
     });
 
     return {

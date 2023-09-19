@@ -14,7 +14,7 @@ export class User extends BaseClass {
     private _email: string,
     private _password: string
   ) {
-    super();
+    super(id);
   }
 
   public toJSON(): UserJSON {

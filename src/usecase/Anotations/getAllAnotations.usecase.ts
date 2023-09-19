@@ -8,18 +8,18 @@ export type GetAllAnotationsResponseDTO = {
 };
 
 export class GetAllAnotationsUseCase {
-  constructor(private anotationRepository: AnotationRepository) {}
-
-  execute(
+  public async execute(
     userId: string,
     archived: boolean,
     title?: string
-  ): GetAllAnotationsResponseDTO {
-    const anotations = this.anotationRepository.getAllAnotations(
+  ): Promise<GetAllAnotationsResponseDTO> {
+    const anotationRepository = new AnotationRepository();
+
+    const anotations = await anotationRepository.getAllAnotations({
       userId,
+      title,
       archived,
-      title
-    );
+    });
 
     return {
       message:

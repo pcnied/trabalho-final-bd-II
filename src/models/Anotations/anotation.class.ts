@@ -1,8 +1,7 @@
-import { v4 as uuid } from "uuid";
+import { BaseClass } from "../BaseClass/baseClass.class";
 
-export class Anotation {
+export class Anotation extends BaseClass {
   private _userId: string;
-  private _id: string;
   private _title: string;
   private _description: string;
   private _createdAt: Date;
@@ -10,16 +9,18 @@ export class Anotation {
 
   constructor(
     userId: string,
+    id: string,
     title: string,
     description: string,
-    createdAt: Date
+    createdAt: Date,
+    archived: boolean
   ) {
+    super(id);
     this._userId = userId;
-    this._id = uuid();
     this._title = title;
     this._description = description;
     this._createdAt = createdAt;
-    this._archived = false;
+    this._archived = archived;
   }
 
   get userId(): string {

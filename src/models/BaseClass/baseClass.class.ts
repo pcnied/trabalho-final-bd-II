@@ -1,10 +1,8 @@
-import { randomUUID } from "crypto";
-
 export abstract class BaseClass {
-  protected id: string;
+  protected _id: string;
 
-  constructor() {
-    this.id = randomUUID();
+  constructor(id: string) {
+    this._id = id;
   }
 
   toJSON() {}
