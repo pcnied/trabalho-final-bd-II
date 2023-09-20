@@ -1,6 +1,8 @@
 import "dotenv/config";
 import { DataSourceOptions } from "typeorm";
 
+const basePath = process.env.NODE_ENV === "dev" ? "src" : "dist";
+
 const configs: DataSourceOptions = {
   type: "postgres",
   url: process.env.URL_DATABASE,
@@ -11,8 +13,8 @@ const configs: DataSourceOptions = {
   // database: process.env.DB_DATABASE,
   synchronize: false,
   logging: false,
-  entities: ["src/database/entities/**/*"],
-  migrations: ["src/database/migrations/**/*"],
+  entities: [`${basePath}/database/entities/**/*`],
+  migrations: [`${basePath}/database/migrations/**/*`],
   ssl: {
     rejectUnauthorized: false,
   },

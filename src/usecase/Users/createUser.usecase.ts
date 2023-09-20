@@ -1,4 +1,4 @@
-import { UsersRepository } from "../../repositories";
+import { UserRepository } from "../../repositories";
 
 export type RequestCreateDTO = {
   name: string;
@@ -14,7 +14,7 @@ type ResponseCreateDTO = {
 
 export class CreateUser {
   public async execute(data: RequestCreateDTO): Promise<ResponseCreateDTO> {
-    const repository = new UsersRepository();
+    const repository = new UserRepository();
 
     const userExists = await repository.getByEmail(data.email);
 

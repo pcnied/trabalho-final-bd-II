@@ -19,7 +19,7 @@ export class User extends BaseClass {
 
   public toJSON(): UserJSON {
     return {
-      id: this.id,
+      id: this._id,
       name: this._name,
       email: this._email,
       password: this._password,

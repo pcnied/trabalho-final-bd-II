@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { UserDTO } from "../../usecase";
+import { RequestCreateDTO } from "../../usecase";
 
 export function validateDataUser(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  const user: UserDTO = req.body;
+  const user: RequestCreateDTO = req.body;
 
   if (!user.name || !user.email || !user.password) {
     return res.status(400).json({

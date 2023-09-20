@@ -1,5 +1,5 @@
 import { UserJSON } from "../../models";
-import { UsersRepository } from "../../repositories";
+import { UserRepository } from "../../repositories";
 
 export type LoginUserDTO = {
   email: string;
@@ -14,7 +14,7 @@ type ResponseLoginUser = {
 
 export class LoginUser {
   public async execute(data: LoginUserDTO): Promise<ResponseLoginUser> {
-    const repository = new UsersRepository();
+    const repository = new UserRepository();
 
     const searchUser = await repository.findUserByCredencials(data);
 
