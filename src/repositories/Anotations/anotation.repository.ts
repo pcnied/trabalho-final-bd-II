@@ -7,7 +7,7 @@ type CreateRequestDTO = {
   userId: string;
   title: string;
   description: string;
-  createdAt: Date;
+  createdAt?: Date;
 };
 
 type UpdateRequestDTO = {

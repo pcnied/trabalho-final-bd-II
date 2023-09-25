@@ -1,5 +1,3 @@
-import { pgHelper } from "../../database";
-import { AnotationEntity } from "../../database/entities/anotation.entity";
 import { Anotation } from "../../models";
 import { AnotationRepository } from "../../repositories";
 
@@ -23,19 +21,16 @@ export class CreateAnotationUseCase {
 
     const anotationRepository = new AnotationRepository();
 
-    const newAnotation = pgHelper.client.manager.create(AnotationEntity, {
+    const newAnotation = await anotationRepository.createAnotation({
       userId,
       title,
       description,
     });
-    const responseNewAnotation = await anotationRepository.createAnotation(
-      newAnotation
-    );
 
     return {
       message: "Anotação criada com sucesso!",
       success: true,
-      anotation: responseNewAnotation,
+      anotation: newAnotation,
     };
   }
 }
