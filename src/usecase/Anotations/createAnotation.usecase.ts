@@ -10,7 +10,7 @@ export type CreateAnotationRequestDTO = {
 export type CreateAnotationResponseDTO = {
   message: string;
   success: boolean;
-  anotation?: Anotation;
+  anotation: Anotation;
 };
 
 export class CreateAnotationUseCase {
@@ -21,7 +21,7 @@ export class CreateAnotationUseCase {
 
     const anotationRepository = new AnotationRepository();
 
-    const newAnotation = await anotationRepository.createAnotation({
+    const anotation = await anotationRepository.createAnotation({
       userId,
       title,
       description,
@@ -30,7 +30,7 @@ export class CreateAnotationUseCase {
     return {
       message: "Anotação criada com sucesso!",
       success: true,
-      anotation: newAnotation,
+      anotation,
     };
   }
 }

@@ -26,6 +26,7 @@ export class UpdateAnotationUseCase {
     const anotationFound = await anotationRepository.getAnotationById(
       anotationId
     );
+    console.log(anotationId);
 
     if (!anotationFound || anotationFound.userId != userId) {
       return {
@@ -40,6 +41,7 @@ export class UpdateAnotationUseCase {
       description: description ? description : anotationFound.description,
       archived: archived != undefined ? archived : anotationFound.archived,
     });
+    console.log(anotationUpdated);
 
     return {
       message: "Anotação atualizada com sucesso!",

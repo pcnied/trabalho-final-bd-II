@@ -54,14 +54,14 @@ app.get(
 
 // ROTA PARA DELETAR ANOTAÇÃO
 app.delete(
-  "/users/:userId/anotation/:id",
+  "/users/:userId/anotation/:anotationId",
   verifyUserExist,
   DeleteAnotationController.execute
 );
 
 // ROTA PARA ATUALIZAÇÃO ANOTAÇÃO
 app.put(
-  "/users/:userId/anotation/:id",
+  "/users/:userId/anotation/:anotationId",
   verifyUserExist,
   verifyUpdateAnotation,
   UpdateAnotationController.execute

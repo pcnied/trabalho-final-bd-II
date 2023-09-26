@@ -7,7 +7,6 @@ type CreateRequestDTO = {
   userId: string;
   title: string;
   description: string;
-  createdAt?: Date;
 };
 
 type UpdateRequestDTO = {
@@ -41,11 +40,7 @@ export class AnotationRepository {
 
   public async deleteAnotation(anotationId: string): Promise<void> {
     const manager = pgHelper.client.manager;
-    await manager.delete(AnotationEntity, {
-      where: {
-        id: anotationId,
-      },
-    });
+    await manager.delete(AnotationEntity, anotationId);
   }
 
   public async updateAnotation(
@@ -53,12 +48,14 @@ export class AnotationRepository {
   ): Promise<Anotation | null> {
     const { anotationId, title, description, archived } = data;
     const manager = pgHelper.client.manager;
+    console.log(title, description, anotationId);
 
-    await manager.update(
+    const anotationUpdated = await manager.update(
       AnotationEntity,
-      { id: anotationId },
-      { title, description, archived }
+      {},
+      { title: title, description: description, archived: archived }
     );
+    console.log(anotationUpdated);
 
     const anotationFound = await manager.findOne(AnotationEntity, {
       where: {
