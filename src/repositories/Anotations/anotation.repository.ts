@@ -1,4 +1,4 @@
-import { FindOptionsWhere } from "typeorm";
+import { FindOptionsWhere, ILike } from "typeorm";
 import { pgHelper } from "../../database";
 import { AnotationEntity } from "../../database/entities/anotation.entity";
 import { Anotation } from "../../models";
@@ -50,12 +50,11 @@ export class AnotationRepository {
     const manager = pgHelper.client.manager;
     console.log(title, description, anotationId);
 
-    const anotationUpdated = await manager.update(
+    await manager.update(
       AnotationEntity,
-      {},
+      { id: anotationId },
       { title: title, description: description, archived: archived }
     );
-    console.log(anotationUpdated);
 
     const anotationFound = await manager.findOne(AnotationEntity, {
       where: {
@@ -75,7 +74,7 @@ export class AnotationRepository {
     const filters: FindOptionsWhere<AnotationEntity> = { userId };
 
     if (title) {
-      filters.title = title;
+      filters.title = ILike(`%${title}%`);
     }
 
     if (archived != undefined) {
